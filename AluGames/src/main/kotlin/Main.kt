@@ -1,10 +1,20 @@
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 import java.util.Scanner;
 
+
+//    try{
+//        val meuJogo = Jogo(
+//            meuInfoJogo.info.title,
+//            meuInfoJogo.info.thumb
+//        )
+//    } catch(ex: NullPointerException){
+//        println("Jogo Inexistenete. Tente outro id")
+//    }
 
 fun main() {
 
@@ -24,18 +34,53 @@ fun main() {
 
     val json = response.body()
     println(json)
-    
+
 
     val gson = Gson()
-    val meuInfoJogo = gson.fromJson(json, InfoJogo::class.java)
+    var meuInfoJogo:InfoJogo? = null
 
-
-    try{
-        val meuJogo = Jogo(
-            meuInfoJogo.info.title,
-            meuInfoJogo.info.thumb
+    val resultadoIJ = runCatching {
+        meuInfoJogo =  gson.fromJson(
+            json,
+            InfoJogo::class.java
         )
-    } catch(){
+    }
+    resultadoIJ.onFailure{
+        println("Id informado inexistente. Tente outro id.")
+        System.exit(1)
+    }
+
+    var meuJogo:Jogo? = null
+
+    val resultado = runCatching {
+        meuJogo = Jogo(
+            meuInfoJogo!!.info.title,
+            meuInfoJogo!!.info.thumb
+        )
+    }
+    resultado.onFailure{
+        println("Jogo inexsitstente, tente outro id.")
 
     }
+
+    resultado.onSuccess {
+        println("Deseja inserir uma descrição personalizada? (S/N)")
+        val opcao = leitura.nextLine()
+        if (opcao.equals("s", true)){
+            println("Insira a descrição personalizada para o jogo.")
+            val descricaoPersonalizada = leitura.nextLine()
+            meuJogo?.descricao = descricaoPersonalizada
+
+        } else {
+            meuJogo?.descricao = meuJogo?.titulo
+        }
+
+        println(meuJogo)
+    }
+
+    resultado.onSuccess {
+        println("Busca finalizada com sucesso.")
+    }
+
+
 }
