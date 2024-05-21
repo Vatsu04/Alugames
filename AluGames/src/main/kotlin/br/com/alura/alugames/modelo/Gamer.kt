@@ -4,6 +4,7 @@ import kotlin.random.Random
 
 data class Gamer(var nome:String, var email:String){
     var dataNascimento:String? = null
+
     var usuario:String? = null
         set(value){
             field = value
@@ -13,7 +14,6 @@ data class Gamer(var nome:String, var email:String){
         }
 
     var idInterno:String? = null
-    get
     private set
 
 
@@ -25,6 +25,9 @@ data class Gamer(var nome:String, var email:String){
             }
 
     init {
+        if(nome.isNullOrBlank()){
+            throw IllegalArgumentException("Nome está em branco")
+        }
         this.email = validarEmail()
     }
 
@@ -39,13 +42,14 @@ data class Gamer(var nome:String, var email:String){
         this.idInterno = "$usuario#$tag"
     }
 
-    fun validarEmail():String {
-        val regex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,6}\$")
-        if(regex.matches(email)) {
+    fun validarEmail(): String {
+        val regex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}\$")
+        if (regex.matches(email)) {
             return email
         } else {
             throw IllegalArgumentException("Email inválido")
         }
     }
+
 
 }
