@@ -7,43 +7,51 @@ import java.util.*
 fun main() {
 
     val leitura = Scanner(System.`in`)
-    println("Digite um código de jogo para buscar: ")
-    val busca = leitura.nextLine()
 
-    val buscaApi = ConsumoApi()
+    do{
+        println("Digite um código de jogo para buscar: ")
+        val busca = leitura.nextLine()
 
-    val informacaoJogo = buscaApi.buscaJogo(busca)
+        val buscaApi = ConsumoApi()
 
-    var meuJogo: Jogo? = null
+        val informacaoJogo = buscaApi.buscaJogo(busca)
 
-    val resultado = runCatching {
-        meuJogo = Jogo(
-            informacaoJogo!!.info.title,
-            informacaoJogo.info.thumb
-        )
-    }
-    resultado.onFailure{
-        println("br.com.alura.alugames.modelo.Jogo inexsitstente, tente outro id.")
+        var meuJogo: Jogo? = null
 
-    }
+        val resultado = runCatching {
+            meuJogo = Jogo(
+                informacaoJogo!!.info.title,
+                informacaoJogo.info.thumb
+            )
+        }
+        resultado.onFailure{
+            println("br.com.alura.alugames.modelo.Jogo inexsitstente, tente outro id.")
 
-    resultado.onSuccess {
-        println("Deseja inserir uma descrição personalizada? (S/N)")
-        val opcao = leitura.nextLine()
-        if (opcao.equals("s", true)){
-            println("Insira a descrição personalizada para o jogo.")
-            val descricaoPersonalizada = leitura.nextLine()
-            meuJogo?.descricao = descricaoPersonalizada
-
-        } else {
-            meuJogo?.descricao = meuJogo?.titulo
         }
 
-        println(meuJogo)
+        resultado.onSuccess {
+            println("Deseja inserir uma descrição personalizada? (S/N)")
+            val opcao = leitura.nextLine()
+            if (opcao.equals("s", true)){
+                println("Insira a descrição personalizada para o jogo.")
+                val descricaoPersonalizada = leitura.nextLine()
+                meuJogo?.descricao = descricaoPersonalizada
+
+            } else {
+                meuJogo?.descricao = meuJogo?.titulo
+            }
+
+            println(meuJogo)
+        }
+        println("Deseja buscar um novo jogo? (S/N)")
+
+
+
+
     }
 
-    resultado.onSuccess {
         println("Busca finalizada com sucesso.")
-    }
+
+
 
 }
